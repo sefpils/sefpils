@@ -35,7 +35,7 @@ def signal_handler(signal, frame):
 	curses.endwin()
 	sys.exit(1)
 	
-def addPerson(wnd, wnd2):
+def addPerson(wnd, wnd2, personlist):
 	wnd.clear()
 	helpstr = "Enter: cardnumber"
 	wnd.addstr(0,0, helpstr, curses.color_pair(3))
@@ -47,10 +47,10 @@ def addPerson(wnd, wnd2):
 	wnd.move(3,0)
 	wnd.refresh()
 	name = wnd.getstr()
-	newPerson = Person(name, cardnumber, 0, 0, 0)
+	newPerson = Person(name, cardnumber, [], 0, 0)
 	personlist.append(newPerson)
 
-def addProduct(wnd, wnd2):
+def addProduct(wnd, wnd2, produktlist):
 	wnd.clear()
 	helpstr = "Enter: barcode"
 	wnd.addstr(0,0, helpstr, curses.color_pair(3))
@@ -84,13 +84,12 @@ def sjekkOgKjop(wnd, wnd2, produktlist, personlist):
 	wnd2.move(0,0)
 	key = wnd2.getstr()
 	if key == "addperson":
-		addPerson(wnd, wnd2)
+		addPerson(wnd, wnd2, personlist)
 	if key == "addproduct":
-		addProduct(wnd, wnd2)
+		addProduct(wnd, wnd2, produktlist)
 		
 	elif key == "help":
 		wnd.clear()
-		helpstr2 = "Hei"
 		helpstr = """<<<<<<Help>>>>>>
 			options (enter options) then do:
 			addperson (add new person)
@@ -118,7 +117,7 @@ def sjekkOgKjop(wnd, wnd2, produktlist, personlist):
 						j.pilslist.append(i.prodnavn)
 						j.totalsum += i.pris
 						i.antallKjol -= 1
-					return True
+						return True
 				return False
 	return False
 		
@@ -127,53 +126,53 @@ def sjekkOgKjop(wnd, wnd2, produktlist, personlist):
 
 
 
-p1 = Person("Anders", "UO00267920", [], 0, 0)
-p2 = Person("Snorre", "UO00259236", [], 0, 0)
-p3 = Person("Jon Magnus", "UO00224628", [], 0, 0)
-personlist = [p1, p2, p3]
+def main(wnd):
+	p1 = Person("Anders", "UO00267920", [], 0, 0)
+	p2 = Person("Snorre", "UO00259236", [], 0, 0)
+	p3 = Person("Jon Magnus", "UO00224628", [], 0, 0)
+	personlist = [p1, p2, p3]
 
-prod = Produkt("Tuborg", "7044610029351", 15, 12)
-produktlist = [prod]
+	prod = Produkt("Tuborg", "7044610029351", 15, 12)
+	produktlist = [prod]
 
-"""*******************************************************"""
-signal.signal(signal.SIGINT, signal_handler)
-wnd = curses.initscr()
-curses.echo()
-wnd.clear()
-curses.start_color()
-curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
-curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK)
-curses.init_pair(1, curses.COLOR_RED, curses.COLOR_GREEN)
-wnd.refresh()
+	"""*******************************************************"""
+	signal.signal(signal.SIGINT, signal_handler)
+	curses.echo()
+	wnd.clear()
+	curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
+	curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK)
+	curses.init_pair(1, curses.COLOR_RED, curses.COLOR_GREEN)
+	wnd.refresh()
 
-wnd1 = curses.newwin(8,60,0,0)
-wnd1.clear()
-wnd1.refresh()
-
-wnd2 = curses.newwin(32,70,30,0)
-wnd2.clear()
-wnd2.refresh()
-
-wnd3 = curses.newwin(20, 70, 9, 0)
-wnd3.clear()
-wnd3.refresh()
-
-wnd4 = curses.newwin(3, 70, 63, 0)
-wnd4.clear()
-wnd4.refresh()
- 
-while True:
+	wnd1 = curses.newwin(8,60,0,0)
 	wnd1.clear()
-	wnd2.clear()
-	wnd4.clear()
-	wnd1.addstr(0,0,ascii_art.sefpils, curses.color_pair(1))
-	wnd2.addstr(0,0,ascii_art.info, curses.color_pair(2))
-	wnd2.refresh()
 	wnd1.refresh()
-	skrivListe(wnd3, personlist)
+
+	wnd2 = curses.newwin(32,70,30,0)
+	wnd2.clear()
+	wnd2.refresh()
+
+	wnd3 = curses.newwin(20, 70, 9, 0)
+	wnd3.clear()
 	wnd3.refresh()
-	sjekkOgKjop(wnd2, wnd4, produktlist, personlist)
-	
+
+	wnd4 = curses.newwin(3, 70, 63, 0)
+	wnd4.clear()
+	wnd4.refresh()
+
+	while True:
+		wnd1.clear()
+		wnd2.clear()
+		wnd4.clear()
+		wnd1.addstr(0,0,ascii_art.sefpils, curses.color_pair(1))
+		wnd2.addstr(0,0,ascii_art.info, curses.color_pair(2))
+		wnd2.refresh()
+		wnd1.refresh()
+		skrivListe(wnd3, personlist)
+		wnd3.refresh()
+		sjekkOgKjop(wnd2, wnd4, produktlist, personlist)
+
+curses.wrapper(main) #tar seg av initscr og start_color osv.
 	
 	
 	
